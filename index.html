@@ -614,6 +614,45 @@ footer {
   .hero::after { letter-spacing: 9px; }
 }
 
+
+/* NEW LEARNING FEATURES */
+.timeline-list { display:grid; gap:10px; margin-top:18px; }
+.timeline-stop {
+  display:grid; grid-template-columns:48px 1fr; gap:2px 12px; align-items:center;
+  width:100%; text-align:left; padding:13px 16px; border-radius:13px;
+  color:#f8edcf; background:#17130c; border:1px solid rgba(215,173,85,.25);
+}
+.timeline-stop:hover { border-color:#e8c879; background:#241c10; }
+.timeline-stop span { grid-row:span 2; color:#e8c879; font-family:'Cinzel',serif; font-size:20px; }
+.timeline-stop b { color:#f3d99c; }
+.timeline-stop small { color:#cbbd9f; }
+.studio-controls { display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; margin:18px; color:#e8c879; }
+.studio-controls select, .certificate-entry input {
+  background:#100d08; color:#fff0c2; border:1px solid rgba(215,173,85,.55);
+  border-radius:10px; padding:10px 13px; font:inherit;
+}
+.piano-keys { display:grid; grid-template-columns:repeat(8,minmax(30px,1fr)); gap:6px; margin:22px auto; max-width:620px; }
+.piano-keys button {
+  min-height:105px; border-radius:0 0 10px 10px; border:1px solid #c9a65f;
+  background:linear-gradient(#fff8e8,#d8c69f); color:#171108; font-weight:900;
+  box-shadow:0 5px 0 #86652d;
+}
+.piano-keys button:active { transform:translateY(4px); box-shadow:0 1px 0 #86652d; }
+#questionAudioArea { margin:12px 0; }
+.certificate-entry { margin:22px 0; padding:18px; border:1px solid rgba(215,173,85,.35); border-radius:14px; }
+.certificate-entry input { width:min(100%,240px); margin:6px; }
+.certificate-preview { margin:20px 0; background:#090806; border:7px double #c99d4c; padding:22px; text-align:center; }
+.certificate-inner { padding:20px 10px; }
+.certificate-inner h2 { color:#e6c47d; font-family:'Cinzel',serif; font-size:clamp(22px,4vw,34px); }
+.certificate-inner h1 { color:#fff0c2; font-family:'Playfair Display',serif; overflow-wrap:anywhere; }
+.certificate-inner p { color:#dfd0ad; }
+.certificate-stars { color:#d7ad55; letter-spacing:5px; margin:14px; }
+.certificate-kicker { color:#e8c879!important; letter-spacing:2px; font-size:12px; }
+@media(max-width:560px) {
+  .piano-keys { grid-template-columns:repeat(4,1fr); }
+  .piano-keys button { min-height:78px; }
+}
+
 </style>
 </head>
 
@@ -768,6 +807,19 @@ footer {
 
   </div>
 
+
+  <div class="card timeline-card">
+    <h2>✦ Story Timeline</h2>
+    <p>Explore the chapter's journey from the fusion performance to its message of understanding.</p>
+    <div class="timeline-list">
+      <button class="timeline-stop" onclick="jumpToSlide(0)"><span>01</span><b>The musical performance</b><small>Meet the fusion group</small></button>
+      <button class="timeline-stop" onclick="jumpToSlide(4)"><span>02</span><b>Shruti's dilemma</b><small>Her interest and her worries</small></button>
+      <button class="timeline-stop" onclick="jumpToSlide(6)"><span>03</span><b>The family conversation</b><small>Different viewpoints emerge</small></button>
+      <button class="timeline-stop" onclick="jumpToSlide(10)"><span>04</span><b>Understanding fusion</b><small>Listening before judging</small></button>
+      <button class="timeline-stop" onclick="jumpToSlide(14)"><span>05</span><b>The message</b><small>Respect, trust and creativity</small></button>
+    </div>
+  </div>
+
   <div class="card">
     <h2>💡 Remember</h2>
     <p>
@@ -789,6 +841,33 @@ footer {
   <div class="heading">
     <h1>👥 Meet the Characters</h1>
     <p>Discover everyone in the musical story.</p>
+  </div>
+
+
+  <div class="card studio-card">
+    <h2>🎹 Virtual Music Studio</h2>
+    <p>Tap a key to play a note. Try the instrument sounds and create your own little melody.</p>
+    <div class="studio-controls">
+      <label for="instrumentSelect">Choose an instrument</label>
+      <select id="instrumentSelect">
+        <option value="piano">Piano</option>
+        <option value="violin">Violin-style tone</option>
+        <option value="flute">Flute-style tone</option>
+        <option value="tabla">Tabla-style rhythm</option>
+      </select>
+    </div>
+    <div class="piano-keys" aria-label="Virtual music keyboard">
+      <button onclick="playStudioNote(261.63)">C</button>
+      <button onclick="playStudioNote(293.66)">D</button>
+      <button onclick="playStudioNote(329.63)">E</button>
+      <button onclick="playStudioNote(349.23)">F</button>
+      <button onclick="playStudioNote(392)">G</button>
+      <button onclick="playStudioNote(440)">A</button>
+      <button onclick="playStudioNote(493.88)">B</button>
+      <button onclick="playStudioNote(523.25)">C′</button>
+    </div>
+    <button class="btn secondary" onclick="playStudioMelody()">▶ Play a short melody</button>
+    <p id="studioStatus" aria-live="polite">Ready to make music.</p>
   </div>
 
   <div class="grid">
@@ -989,7 +1068,7 @@ footer {
 
     <div class="score-bar">
       <span id="scoreDisplay">Score: 0</span>
-      <span id="questionProgress">Questions: 0 / 10</span>
+      <span id="questionProgress">Questions: 0 / 15</span>
     </div>
 
     <div class="question-panel" id="questionBox" hidden>
@@ -997,7 +1076,7 @@ footer {
       <h2 id="questionHeading">Question</h2>
 
       <p id="questionText"></p>
-
+      <div id="questionAudioArea"></div>
       <div id="options"></div>
 
       <h3 id="feedback"></h3>
@@ -1022,6 +1101,18 @@ footer {
       <h1 id="finalScore" style="color:#4ade80"></h1>
 
       <p id="finalMessage"></p>
+
+      <div class="certificate-entry">
+        <h2>🏅 Create Your Certificate</h2>
+        <p>After the quiz, enter the student's name for their roll number. The certificate will show the name, roll number and quiz score.</p>
+        <label for="certificateRoll">Student roll number (1–28)</label>
+        <input id="certificateRoll" type="number" min="1" max="28" step="1" placeholder="Enter roll number">
+        <label for="certificateName">Student name</label>
+        <input id="certificateName" type="text" maxlength="50" placeholder="Enter name for this roll number">
+        <button class="btn" onclick="generateCertificate()">Generate My Certificate</button>
+      </div>
+      <button class="btn secondary" id="printCertificateButton" onclick="printCertificate()" hidden>Print / Save Certificate</button>
+      <div id="certificatePreview" class="certificate-preview" hidden></div>
 
       <button class="btn" onclick="restartQuiz()">
         Play Again
@@ -1353,7 +1444,155 @@ a: [
 correct: 2
 }
 
+,
+{
+  q: "Listen to the sound. Which instrument is being represented?",
+  a: ["Violin", "Tabla", "Flute", "Keyboard"],
+  correct: 0,
+  audio: "violin"
+},
+{
+  q: "Listen to the sound. Which instrument is being represented?",
+  a: ["Keyboard", "Flute", "Tabla", "Violin"],
+  correct: 2,
+  audio: "tabla"
+},
+{
+  q: "Listen to the sound. Which instrument is being represented?",
+  a: ["Tabla", "Violin", "Flute", "Keyboard"],
+  correct: 2,
+  audio: "flute"
+},
+{
+  q: "What does fusion music bring together?",
+  a: ["Only one instrument", "Different musical styles and traditions", "Only silence", "Only spoken words"],
+  correct: 1
+},
+{
+  q: "Which quality helps the young musicians perform together?",
+  a: ["Competition", "Avoiding practice", "Teamwork and coordination", "Playing without listening"],
+  correct: 2
+}
+
 ];
+
+
+
+/* VIRTUAL MUSIC STUDIO + IN-QUESTION INSTRUMENT LISTENING */
+let studioAudioContext = null;
+
+function getStudioAudioContext() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    document.getElementById("studioStatus").textContent = "Audio is not supported in this browser.";
+    return null;
+  }
+  if (!studioAudioContext) studioAudioContext = new AudioContextClass();
+  if (studioAudioContext.state === "suspended") studioAudioContext.resume();
+  return studioAudioContext;
+}
+
+function playTone(frequency, instrument, duration = 0.55) {
+  const ctx = getStudioAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  if (instrument === "tabla") {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(frequency * 1.5, now);
+    osc.frequency.exponentialRampToValueAtTime(65, now + 0.16);
+    gain.gain.setValueAtTime(0.7, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now); osc.stop(now + 0.23);
+    return;
+  }
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const type = instrument === "flute" ? "sine" : instrument === "violin" ? "sawtooth" : "triangle";
+  osc.type = type;
+  osc.frequency.setValueAtTime(frequency, now);
+  if (instrument === "violin") {
+    osc.detune.setValueAtTime(-5, now);
+    osc.detune.linearRampToValueAtTime(5, now + duration);
+  }
+  gain.gain.setValueAtTime(0.001, now);
+  gain.gain.linearRampToValueAtTime(0.22, now + 0.04);
+  gain.gain.setTargetAtTime(0.001, now + duration * 0.68, 0.09);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + duration + 0.35);
+}
+
+function playStudioNote(freq) {
+  const instrument = document.getElementById("instrumentSelect").value;
+  playTone(freq, instrument, 0.65);
+  document.getElementById("studioStatus").textContent = "Playing a " + instrument + " note.";
+}
+
+function playStudioMelody() {
+  const instrument = document.getElementById("instrumentSelect").value;
+  const notes = [261.63, 329.63, 392, 329.63, 349.23, 392, 523.25];
+  notes.forEach((note, i) => setTimeout(() => playTone(note, instrument, 0.42), i * 420));
+  document.getElementById("studioStatus").textContent = "Enjoy your melody!";
+}
+
+function playInstrumentSample(instrument) {
+  const patterns = {
+    violin: [440, 493.88, 523.25, 493.88],
+    flute: [523.25, 587.33, 659.25, 587.33],
+    tabla: [180, 130, 210, 145]
+  };
+  (patterns[instrument] || [440]).forEach((note, i) => {
+    setTimeout(() => playTone(note, instrument, 0.42), i * 300);
+  });
+}
+
+/* STORY TIMELINE NAVIGATION */
+function jumpToSlide(index) {
+  currentSlide = Math.max(0, Math.min(slides.length - 1, index));
+  showSlide();
+  goPage("story");
+}
+
+/* PERSONALIZED CERTIFICATE */
+function generateCertificate() {
+  const name = document.getElementById("certificateName").value.trim();
+  const roll = Number(document.getElementById("certificateRoll").value);
+  if (!name) { alert("Please enter the student's name."); return; }
+  if (!Number.isInteger(roll) || roll < 1 || roll > 28) {
+    alert("Please enter a roll number from 1 to 28."); return;
+  }
+  const preview = document.getElementById("certificatePreview");
+  preview.innerHTML = "";
+  const title = document.createElement("div");
+  title.className = "certificate-inner";
+  title.innerHTML = '<div class="certificate-stars">✦ ✧ ✦</div><p class="certificate-kicker">TWIN MELODIES • CLASS 9 ENGLISH</p><h2>Certificate of Achievement</h2><p>This certificate is proudly presented to</p>';
+  const student = document.createElement("h1");
+  student.textContent = name;
+  const detail = document.createElement("p");
+  detail.textContent = "Roll Number: " + roll + "  •  Quiz Score: " + score + " / " + questions.length;
+  const note = document.createElement("p");
+  note.textContent = "For participating in the Twin Melodies interactive learning challenge.";
+  const footer = document.createElement("div");
+  footer.className = "certificate-stars";
+  footer.textContent = "✦ LEARN • LISTEN • EXPLORE • ENJOY ✦";
+  title.append(student, detail, note, footer);
+  preview.appendChild(title);
+  preview.hidden = false;
+  document.getElementById("printCertificateButton").hidden = false;
+}
+
+function printCertificate() {
+  const preview = document.getElementById("certificatePreview");
+  if (!preview || preview.hidden) return;
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) { alert("Please allow pop-ups to print the certificate."); return; }
+  printWindow.document.write('<!doctype html><html><head><title>Twin Melodies Certificate</title><style>body{margin:0;background:#080806;color:#f7e4b3;font-family:Georgia,serif;display:grid;place-items:center;min-height:100vh}.certificate-inner{width:85%;padding:55px 30px;border:8px double #c99d4c;text-align:center;box-sizing:border-box}.certificate-inner h2{font-size:34px;color:#e6c47d}.certificate-inner h1{font-size:42px;color:#fff0c2;border-bottom:1px solid #c99d4c;padding-bottom:14px}.certificate-inner p{font-size:18px}.certificate-stars{color:#d7ad55;letter-spacing:6px;margin:18px}.certificate-kicker{letter-spacing:3px;font-size:13px!important}</style></head><body>' + preview.innerHTML + '</body></html>');
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
 
 
 /* SPIN WHEEL */
@@ -1368,14 +1607,14 @@ let answered = false;
 
 function randomRollNumber() {
 
-  if (usedNumbers.length >= 50) {
+  if (usedNumbers.length >= 28) {
     usedNumbers = [];
   }
 
   let number;
 
   do {
-    number = Math.floor(Math.random() * 50) + 1;
+    number = Math.floor(Math.random() * 28) + 1;
   } while (usedNumbers.includes(number));
 
   usedNumbers.push(number);
@@ -1484,7 +1723,7 @@ function showQuestion() {
     "Score: " + score;
 
   document.getElementById("questionProgress").textContent =
-    "Questions: " + usedQuestions.length + " / 10";
+    "Questions: " + usedQuestions.length + " / 15";
 
   const options = document.getElementById("options");
 
@@ -1614,7 +1853,7 @@ function finishQuiz() {
 
   let message;
 
-  if (score === 10) {
+  if (score === 15) {
     message = "Perfect score! You are a Twin Melodies champion! 🏆";
   } else if (score >= 7) {
     message = "Excellent performance! Keep it up! 🌟";
@@ -1669,7 +1908,7 @@ function restartQuiz() {
     "Score: 0";
 
   document.getElementById("questionProgress").textContent =
-    "Questions: 0 / 10";
+    "Questions: 0 / 15";
 
   const button = document.getElementById("spinButton");
 
