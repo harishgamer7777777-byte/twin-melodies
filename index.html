@@ -1,0 +1,504 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twin Melodies | English Seminar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+
+:root {
+  --bg:#090d1b;
+  --panel:#141c31;
+  --purple:#9565ff;
+  --cyan:#56d9ed;
+  --gold:#f5ca76;
+  --white:#f7f6ff;
+  --muted:#a8b1cc;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--white);
+ font-family:'DM Sans',sans-serif;min-height:100vh;
+ background-image:radial-gradient(ellipse at 15% 10%,#33215a66,transparent 40%),
+ radial-gradient(ellipse at 90% 85%,#124b5960,transparent 40%);
+}
+button{font-family:inherit;cursor:pointer}
+nav{
+ position:sticky;top:0;z-index:10;
+ display:flex;justify-content:space-between;align-items:center;
+ padding:15px 5%;background:#090d1beF;
+ border-bottom:1px solid #ffffff18;backdrop-filter:blur(15px);
+}
+.logo{font-weight:800;letter-spacing:2px;color:var(--gold)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.nav-right span{font-size:12px;color:var(--muted)}
+.container{max-width:1100px;margin:auto;padding:35px 20px}
+.screen{display:none;animation:fade .5s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.hero{
+ min-height:570px;border:1px solid #ffffff20;border-radius:28px;
+ padding:60px 25px;display:flex;flex-direction:column;
+ justify-content:center;align-items:center;text-align:center;
+ background:linear-gradient(135deg,#19152f,#111b31 60%,#102a3a);
+ position:relative;overflow:hidden;
+}
+.hero:before,.hero:after{
+ content:"♪";position:absolute;color:#ffffff0b;
+ font-size:240px;top:15px;left:5%;
+}
+.hero:after{content:"♫";top:auto;left:auto;right:5%;bottom:0}
+.eyebrow{color:var(--cyan);letter-spacing:5px;font-size:12px;font-weight:800}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.hero h1{
+ font-size:clamp(48px,9vw,90px);margin:20px 0 8px;
+ background:linear-gradient(90deg,#fff,#bca3ff,#65d9e9);
+ color:transparent;background-clip:text;
+}
+.subtitle{font-size:clamp(17px,3vw,24px);color:var(--gold)}
+.hero p{color:var(--muted);line-height:1.8}
+.presenters{margin:25px 0;color:#e0d7ff;line-height:2}
+.btn{
+ border:0;border-radius:12px;padding:13px 24px;
+ font-weight:800;background:linear-gradient(100deg,var(--purple),#6a7cff);
+ color:white;box-shadow:0 8px 25px #8054ff40;
+ transition:.2s;
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.btn.secondary{background:#27344e;box-shadow:none;border:1px solid #ffffff22}
+.btn.gold{background:linear-gradient(100deg,#e8b85f,#ffdc94);color:#20182b}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.slide-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.tag{color:var(--cyan);font-size:12px;letter-spacing:3px;font-weight:800}
+.slide-count{color:var(--muted);font-size:13px}
+.content-card{
+ background:linear-gradient(140deg,#17223a,#121a2d);
+ border:1px solid #ffffff18;border-radius:22px;padding:35px;
+ margin-top:20px;min-height:340px;
+}
+.content-card h2{font-size:clamp(30px,5vw,48px);margin:10px 0 20px}
+.content-card p,.content-card li{color:#c5cee1;line-height:1.9;font-size:17px}
+.content-card ul{padding-left:22px}
+.highlight{color:var(--gold);font-weight:700}
+.slide-controls{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.character{
+ background:#202b45;border:1px solid #ffffff17;border-radius:15px;
+ padding:20px;
+}
+.character h3{color:var(--gold);font-size:22px;margin:0 0 8px}
+.character p{font-size:14px;margin:0}
+.progress{height:5px;background:#29334a;border-radius:20px;margin:20px 0}
+.progress div{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:20px;transition:.3s}
+.section-title{text-align:center;margin-bottom:25px}
+.section-title h2{font-size:clamp(32px,5vw,48px);margin:8px}
+.section-title p{color:var(--muted)}
+.wheel-wrap{
+ max-width:540px;margin:20px auto;position:relative;
+}
+canvas{width:100%;display:block;filter:drop-shadow(0 10px 30px #0008)}
+.pointer{
+ position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+ z-index:2;color:var(--gold);font-size:42px;
+ text-shadow:0 3px 8px #000;
+}
+.center{text-align:center}
+.selected{
+ margin:15px auto;background:#17243c;border:1px solid #ffffff22;
+ border-radius:16px;padding:20px;max-width:400px;
+}
+.selected strong{display:block;font-size:40px;color:var(--gold);margin:8px}
+.small{font-size:13px;color:var(--muted)}
+.question-card{
+ background:linear-gradient(140deg,#192640,#151b30);
+ border:1px solid #ffffff20;border-radius:22px;padding:30px;
+}
+.question-card h2{font-size:clamp(24px,4vw,34px);line-height:1.4}
+.options{display:grid;gap:12px;margin:25px 0}
+.option{
+ padding:16px;border:1px solid #ffffff25;border-radius:12px;
+ background:#202c46;color:white;text-align:left;font-size:15px;
+ transition:.2s;
+}
+.option:hover{border-color:var(--cyan)}
+.option.chosen{border:2px solid var(--purple);background:#49317a66}
+.option.correct{border:2px solid #3bdc9a;background:#164d3d}
+.option.wrong{border:2px solid #ff707b;background:#592b3a}
+.feedback{padding:14px;border-radius:12px;margin:15px 0;display:none;line-height:1.6}
+.feedback.show{display:block}
+.feedback.good{background:#124735;color:#9ff5cb}
+.feedback.bad{background:#542638;color:#ffc1cb}
+.scoreboard{
+ display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:25px 0
+}
+.scorebox{background:#1b2942;border-radius:15px;padding:20px 30px;text-align:center}
+.scorebox strong{display:block;font-size:30px;color:var(--gold)}
+footer{text-align:center;color:#71809c;padding:30px;font-size:12px}
+.hidden{display:none!important}
+@media(max-width:600px){
+ nav{padding:12px 4%}.container{padding:22px 14px}
+ .hero{padding:40px 15px;min-height:520px}
+ .content-card{padding:23px}.question-card{padding:20px}
+ .btn{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+ <div class="logo">♫ TWIN MELODIES</div>
+ <div class="nav-right">
+  <span>CLASS 9 · ENGLISH SEMINAR</span>
+  <button class="btn secondary" onclick="goHome()">HOME</button>
+ </div>
+</nav>
+
+<main class="container">
+
+<!-- HOME -->
+<section id="home" class="screen active">
+ <div class="hero">
+  <div class="eyebrow">AN ENGLISH LITERARY JOURNEY</div>
+  <h1>TWIN<br>MELODIES</h1>
+  <div class="subtitle">Two Worlds. One Harmony.</div>
+  <p>Discover the story, its characters and the beautiful world of music.</p>
+  <div class="presenters">
+   <b>PRESENTED BY</b><br>
+   S. T. Harish Pandian<br>
+   Vigneshwaran K.A.<br>
+   Vishnu
+  </div>
+  <button class="btn gold" onclick="startPresentation()">EXPLORE THE SEMINAR →</button>
+  <p class="small">CLASS 9 · ENGLISH</p>
+ </div>
+</section>
+
+<!-- PRESENTATION -->
+<section id="presentation" class="screen">
+ <div class="slide-top">
+  <div class="tag">TWIN MELODIES · SEMINAR</div>
+  <div class="slide-count" id="slideCount">SLIDE 1 / 7</div>
+ </div>
+ <div class="progress"><div id="slideProgress" style="width:14%"></div></div>
+ <div id="slideContent"></div>
+ <div class="slide-controls">
+  <button class="btn secondary" onclick="changeSlide(-1)">← Previous</button>
+  <button class="btn" onclick="changeSlide(1)">Next →</button>
+ </div>
+</section>
+
+<!-- WHEEL -->
+<section id="wheel" class="screen">
+ <div class="section-title">
+  <div class="tag">THE CLASSROOM CHALLENGE</div>
+  <h2>🎡 Spin the Wheel</h2>
+  <p>Who will be today's lucky challenger?</p>
+ </div>
+ <div class="wheel-wrap">
+  <div class="pointer">▼</div>
+  <canvas id="wheelCanvas" width="600" height="600"></canvas>
+ </div>
+ <div class="center">
+  <button class="btn gold" id="spinButton" onclick="spinWheel()">SPIN NOW!</button>
+  <div class="selected">
+   <div class="small">SELECTED STUDENT</div>
+   <strong id="selectedRoll">??</strong>
+   <div id="selectedStatus" class="small">Waiting for the spin...</div>
+  </div>
+  <p class="small" id="remaining">28 students remaining</p>
+  <button class="btn" id="startQuiz" onclick="startQuiz()" disabled>ANSWER THE QUESTION →</button>
+  <br><br>
+  <button class="btn secondary" onclick="resetWheel()">RESET WHEEL</button>
+ </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="screen">
+ <div class="section-title">
+  <div class="tag">TWIN MELODIES KNOWLEDGE TEST</div>
+  <h2>Quiz Arena 🏆</h2>
+  <p id="quizStudent">Selected student</p>
+ </div>
+ <div class="progress"><div id="quizProgress" style="width:20%"></div></div>
+ <div class="question-card">
+  <div class="tag" id="questionNumber">QUESTION 1 OF 5</div>
+  <h2 id="questionText"></h2>
+  <div class="options" id="options"></div>
+  <div id="feedback" class="feedback"></div>
+  <div class="center">
+   <button class="btn" id="checkAnswer" onclick="checkAnswer()">CHECK ANSWER</button>
+   <button class="btn gold hidden" id="nextQuestion" onclick="nextQuestion()">NEXT →</button>
+  </div>
+ </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="screen">
+ <div class="hero">
+  <div class="eyebrow">SEMINAR QUIZ COMPLETED</div>
+  <h1>WELL DONE!</h1>
+  <div class="subtitle">Every note makes a difference.</div>
+  <div class="scoreboard">
+   <div class="scorebox"><strong id="finalScore">0/5</strong><span>Correct answers</span></div>
+   <div class="scorebox"><strong id="finalPercent">0%</strong><span>Accuracy</span></div>
+  </div>
+  <div id="resultMessage"></div>
+  <button class="btn gold" onclick="showScreen('wheel')">SPIN AGAIN →</button>
+  <br>
+  <button class="btn secondary" onclick="goHome()">BACK TO HOME</button>
+ </div>
+</section>
+
+</main>
+
+<footer>
+ TWIN MELODIES · CLASS 9 ENGLISH SEMINAR<br>
+ Presented by Harish Pandian · Vigneshwaran K.A. · Vishnu
+</footer>
+
+<script>
+const slides = [
+{
+ title:"What is Twin Melodies?",
+ tag:"INTRODUCTION",
+ body:`<p><span class="highlight">Twin Melodies</span> is a lesson presented in the form of a drama, written by <b>Mitra Phukan</b>.</p>
+ <p>The lesson brings together music, family, learning and the relationship between generations.</p>
+ <p>It introduces us to young Shruti and the musical world around her.</p>`
+},
+{
+ title:"Meet the Characters",
+ tag:"CHARACTER INTRODUCTION",
+ body:`<div class="grid">
+ <div class="character"><h3>Shruti Sharma</h3><p>A young aspiring violinist.</p></div>
+ <div class="character"><h3>Guru Nabin Sharma</h3><p>Shruti's father, a violinist and principal of Sangeetika Music School.</p></div>
+ <div class="character"><h3>Leela Devi</h3><p>Shruti's mother.</p></div>
+ <div class="character"><h3>Avinash</h3><p>Tabla player of the fusion group.</p></div>
+ <div class="character"><h3>Iqbal</h3><p>A flute player.</p></div>
+ <div class="character"><h3>Peter</h3><p>Keyboard player of the fusion group.</p></div>
+ </div>`
+},
+{
+ title:"The World of Music",
+ tag:"MUSIC AND CULTURE",
+ body:`<p>The lesson introduces both Indian classical music and Western musical instruments.</p>
+ <ul>
+ <li><b>Violin:</b> Shruti's musical instrument.</li>
+ <li><b>Tabla:</b> A percussion instrument associated with Avinash.</li>
+ <li><b>Flute:</b> Played by Iqbal.</li>
+ <li><b>Keyboard:</b> Played by Peter.</li>
+ </ul>
+ <p>The fusion group brings different musical sounds together.</p>`
+},
+{
+ title:"The Story at a Glance",
+ tag:"STORY OVERVIEW",
+ body:`<p>The drama centres on Shruti, a young violinist, and her family and musical surroundings.</p>
+ <p>Through conversations and preparations for a performance, the characters discuss musical practice, family expectations, encouragement and the choices young people make.</p>
+ <p>The lesson explores how different musical traditions and generations can come together.</p>`
+},
+{
+ title:"Important Themes",
+ tag:"WHAT WE LEARN",
+ body:`<ul>
+ <li><b>Family:</b> Family relationships and expectations play an important role.</li>
+ <li><b>Music:</b> Music connects people from different backgrounds.</li>
+ <li><b>Tradition:</b> Classical musical traditions are an important part of the story.</li>
+ <li><b>Individual choice:</b> Young people need encouragement and understanding.</li>
+ <li><b>Teamwork:</b> Different instruments can contribute to one performance.</li>
+ </ul>`
+},
+{
+ title:"Why the Title?",
+ tag:"TITLE EXPLANATION",
+ body:`<p>The title <span class="highlight">Twin Melodies</span> suggests two musical lines or worlds coming together.</p>
+ <p>In the lesson, Indian classical music and Western musical influences meet through the fusion performance.</p>
+ <p>The title also invites us to think about different generations, their perspectives and their shared love of music.</p>`
+},
+{
+ title:"Conclusion",
+ tag:"THE FINAL NOTE",
+ body:`<p><b>Twin Melodies</b> reminds us that music can bring different people and traditions together.</p>
+ <p>It also highlights the importance of family understanding, encouragement, practice and respecting individual choices.</p>
+ <p class="highlight">Different melodies can create one beautiful harmony!</p>
+ <p>Thank you! Now let's test our knowledge in the Quiz Arena.</p>`
+}
+];
+
+let slideIndex=0;
+function showScreen(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function goHome(){showScreen('home')}
+function startPresentation(){slideIndex=0;renderSlide();showScreen('presentation')}
+function renderSlide(){
+ const s=slides[slideIndex];
+ document.getElementById('slideContent').innerHTML=`
+ <div class="content-card">
+ <div class="tag">${s.tag}</div>
+ <h2>${s.title}</h2>${s.body}</div>`;
+ document.getElementById('slideCount').textContent=`SLIDE ${slideIndex+1} / ${slides.length}`;
+ document.getElementById('slideProgress').style.width=((slideIndex+1)/slides.length*100)+'%';
+}
+function changeSlide(direction){
+ slideIndex=Math.max(0,Math.min(slides.length-1,slideIndex+direction));
+ renderSlide();
+ if(slideIndex===slides.length-1){
+  document.querySelector('.slide-controls button:last-child').textContent='GO TO SPIN WHEEL →';
+  document.querySelector('.slide-controls button:last-child').onclick=()=>showScreen('wheel');
+ }else{
+  document.querySelector('.slide-controls button:last-child').textContent='Next →';
+  document.querySelector('.slide-controls button:last-child').onclick=()=>changeSlide(1);
+ }
+}
+
+// SPINNING WHEEL
+const canvas=document.getElementById('wheelCanvas');
+const ctx=canvas.getContext('2d');
+const total=28;
+let available=Array.from({length:total},(_,i)=>i+1);
+let angle=0,spinning=false,selected=null;
+const colors=['#7654d9','#267f9b','#b64c8d','#bc8840','#416cba','#398a76','#8b5ac0'];
+function drawWheel(){
+ const cx=300,cy=300,r=280;
+ ctx.clearRect(0,0,600,600);
+ const slice=Math.PI*2/total;
+ for(let i=0;i<total;i++){
+  const start=angle+i*slice-Math.PI/2;
+  ctx.beginPath();ctx.moveTo(cx,cy);
+  ctx.arc(cx,cy,r,start,start+slice);ctx.closePath();
+  ctx.fillStyle=colors[i%colors.length];ctx.fill();
+  ctx.strokeStyle='#ffffffaa';ctx.lineWidth=2;ctx.stroke();
+  ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);
+  ctx.fillStyle='white';ctx.font='bold 19px sans-serif';
+  ctx.textAlign='right';ctx.fillText(String(i+1),r-17,7);
+  ctx.restore();
+ }
+ ctx.beginPath();ctx.arc(cx,cy,45,0,Math.PI*2);
+ ctx.fillStyle='#10182b';ctx.fill();
+ ctx.strokeStyle='#f5ca76';ctx.lineWidth=5;ctx.stroke();
+ ctx.fillStyle='#f5ca76';ctx.font='bold 18px sans-serif';
+ ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('SPIN',cx,cy);
+}
+drawWheel();
+function spinWheel(){
+ if(spinning||available.length===0)return;
+ spinning=true;selected=null;
+ document.getElementById('spinButton').disabled=true;
+ document.getElementById('startQuiz').disabled=true;
+ document.getElementById('selectedRoll').textContent='...';
+ document.getElementById('selectedStatus').textContent='The wheel is spinning!';
+ const chosenIndex=Math.floor(Math.random()*available.length);
+ const roll=available[chosenIndex];
+ const slice=Math.PI*2/total;
+ const desired=-(roll-1)*slice-slice/2;
+ let target=((desired-angle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+ target+=Math.PI*2*(6+Math.random()*3);
+ const start=angle,duration=4800,begin=performance.now();
+ function animate(now){
+  const t=Math.min(1,(now-begin)/duration);
+  const ease=1-Math.pow(1-t,5);
+  angle=start+target*ease;
+  drawWheel();
+  if(t<1){requestAnimationFrame(animate)}
+  else{
+   spinning=false;selected=roll;
+   available.splice(chosenIndex,1);
+   document.getElementById('selectedRoll').textContent='ROLL '+roll;
+   document.getElementById('selectedStatus').textContent='Congratulations! You have been selected.';
+   document.getElementById('remaining').textContent=available.length+' students remaining';
+   document.getElementById('spinButton').disabled=available.length===0;
+   document.getElementById('startQuiz').disabled=false;
+  }
+ }
+ requestAnimationFrame(animate);
+}
+function resetWheel(){
+ if(spinning)return;
+ available=Array.from({length:total},(_,i)=>i+1);
+ selected=null;angle=0;drawWheel();
+ document.getElementById('selectedRoll').textContent='??';
+ document.getElementById('selectedStatus').textContent='Waiting for the spin...';
+ document.getElementById('remaining').textContent='28 students remaining';
+ document.getElementById('spinButton').disabled=false;
+ document.getElementById('startQuiz').disabled=true;
+}
+
+// QUIZ
+const questions=[
+ {q:"Who is Shruti Sharma?",o:["A young aspiring violinist","A famous dancer","A school principal","A flute teacher"],a:0,e:"Shruti Sharma is introduced as a young aspiring violinist."},
+ {q:"Who is Guru Nabin Sharma?",o:["Shruti's brother","Shruti's father and principal of Sangeetika Music School","A tabla player","A keyboard player"],a:1,e:"He is Shruti's father, a violinist and the principal of Sangeetika Music School."},
+ {q:"What instrument does Avinash play?",o:["Flute","Violin","Tabla","Keyboard"],a:2,e:"Avinash is the tabla player of the fusion group."},
+ {q:"Who plays the keyboard in the fusion group?",o:["Iqbal","Peter","Avinash","Shruti"],a:1,e:"Peter is the keyboard player of the fusion group."},
+ {q:"What is one of the central ideas explored in the lesson?",o:["A cricket competition","A journey through a forest","Family, music and individual choices","A science exhibition"],a:2,e:"The drama explores music, family relationships, encouragement and individual choices."}
+];
+let qIndex=0,chosenOption=null,score=0,answered=false,quizHistory=[];
+function startQuiz(){
+ if(!selected)return;
+ qIndex=0;score=0;quizHistory=[];
+ document.getElementById('quizStudent').textContent='Selected student: Roll Number '+selected;
+ renderQuestion();showScreen('quiz');
+}
+function renderQuestion(){
+ chosenOption=null;answered=false;
+ const q=questions[qIndex];
+ document.getElementById('questionNumber').textContent=`QUESTION ${qIndex+1} OF ${questions.length}`;
+ document.getElementById('questionText').textContent=q.q;
+ document.getElementById('quizProgress').style.width=((qIndex+1)/questions.length*100)+'%';
+ document.getElementById('feedback').className='feedback';
+ document.getElementById('feedback').textContent='';
+ document.getElementById('checkAnswer').classList.remove('hidden');
+ document.getElementById('checkAnswer').disabled=false;
+ document.getElementById('nextQuestion').classList.add('hidden');
+ document.getElementById('options').innerHTML='';
+ q.o.forEach((option,i)=>{
+  const b=document.createElement('button');
+  b.className='option';b.textContent=String.fromCharCode(65+i)+'. '+option;
+  b.onclick=()=>selectOption(i);
+  document.getElementById('options').appendChild(b);
+ });
+}
+function selectOption(i){
+ if(answered)return;
+ chosenOption=i;
+ document.querySelectorAll('.option').forEach((b,j)=>b.classList.toggle('chosen',j===i));
+}
+function checkAnswer(){
+ if(chosenOption===null){alert('Please select an answer first!');return}
+ answered=true;
+ const q=questions[qIndex],correct=chosenOption===q.a;
+ if(correct)score++;
+ quizHistory.push({roll:selected,question:qIndex+1,correct});
+ document.querySelectorAll('.option').forEach((b,i)=>{
+  b.disabled=true;
+  if(i===q.a)b.classList.add('correct');
+  if(i===chosenOption&&!correct)b.classList.add('wrong');
+ });
+ const fb=document.getElementById('feedback');
+ fb.className='feedback show '+(correct?'good':'bad');
+ fb.innerHTML=(correct?'✓ Correct! Well done! ':'✗ Not quite! ')+q.e;
+ document.getElementById('checkAnswer').classList.add('hidden');
+ document.getElementById('nextQuestion').classList.remove('hidden');
+ document.getElementById('nextQuestion').textContent=qIndex===questions.length-1?'VIEW RESULTS →':'NEXT QUESTION →';
+}
+function nextQuestion(){
+ if(qIndex<questions.length-1){qIndex++;renderQuestion()}
+ else{
+  document.getElementById('finalScore').textContent=score+'/5';
+  document.getElementById('finalPercent').textContent=Math.round(score/5*100)+'%';
+  document.getElementById('resultMessage').textContent=score>=4?'Excellent performance! 🌟':score>=2?'Good effort! Keep learning!':'Keep practising. You can do it!';
+  showScreen('results');
+ }
+}
+document.addEventListener('keydown',e=>{
+ if(document.getElementById('presentation').classList.contains('active')){
+  if(e.key==='ArrowRight')changeSlide(1);
+  if(e.key==='ArrowLeft')changeSlide(-1);
+ }
+});
+</script>
+</body>
+</html>
