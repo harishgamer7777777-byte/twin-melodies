@@ -1488,7 +1488,10 @@ function getStudioAudioContext() {
     return null;
   }
   if (!studioAudioContext) studioAudioContext = new AudioContextClass();
-  if (studioAudioContext.state === "suspended") studioAudioContext.resume();
+  if (studioAudioContext.state === "suspended") {
+    // Called from the Play Sound button click, satisfying browser audio policies.
+    studioAudioContext.resume().catch(() => {});
+  }
   return studioAudioContext;
 }
 
@@ -1713,6 +1716,24 @@ function showQuestion() {
 
   document.getElementById("questionText").textContent =
     question.q;
+
+  // Add an explicit user-initiated playback control for listening questions.
+  const audioArea = document.getElementById("questionAudioArea");
+  audioArea.innerHTML = "";
+  if (question.audio) {
+    const playButton = document.createElement("button");
+    playButton.type = "button";
+    playButton.className = "btn";
+    playButton.textContent = "▶ Play Sound";
+    playButton.addEventListener("click", () => {
+      playInstrumentSample(question.audio);
+      playButton.textContent = "↻ Play Again";
+    });
+    audioArea.appendChild(playButton);
+    const hint = document.createElement("small");
+    hint.textContent = "Tap Play Sound to hear the instrument. You can replay it.";
+    audioArea.appendChild(hint);
+  }
 
   document.getElementById("feedback").textContent = "";
 
